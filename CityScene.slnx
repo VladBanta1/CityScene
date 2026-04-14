@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="CityScene/CityScene.vcxproj" Id="efdec2fa-ac43-4b5e-99da-069823388545" />
+</Solution>
