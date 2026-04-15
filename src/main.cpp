@@ -367,9 +367,9 @@ int main() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // ── Soare ────────────────────────────────────────────────────
-    glm::vec3 sunPos(-25.f, 55.f, -20.f);
+    glm::vec3 sunPos(-30.f, 60.f, -25.f);
     glm::vec3 sunDir = glm::normalize(-sunPos);
-    glm::mat4 lProj = glm::ortho(-58.f, 58.f, -58.f, 58.f, 1.f, 160.f);
+    glm::mat4 lProj = glm::ortho(-70.f, 70.f, -70.f, 70.f, 0.5f, 220.f);
     glm::mat4 lView = glm::lookAt(sunPos, glm::vec3(0.f), glm::vec3(0, 1, 0));
     glm::mat4 lightSpaceMat = lProj * lView;
 
@@ -474,7 +474,7 @@ int main() {
         processInput(window);
         glm::vec3 prevPos = playerCar.pos;
         float r = glm::radians(playerCar.yaw);
-        playerCar.pos += glm::vec3(cosf(r), 0.f, sinf(r)) * playerCar.speed * deltaTime;
+        playerCar.pos += glm::vec3(cosf(r), 0.f, -sinf(r)) * playerCar.speed * deltaTime;
         playerCar.pos.x = glm::clamp(playerCar.pos.x, -25.f, 25.f);
         playerCar.pos.z = glm::clamp(playerCar.pos.z, -20.f, 20.f);
         if (checkCollision(playerCar.pos, buildings, numB)) {
@@ -517,7 +517,7 @@ int main() {
         auto drawCar = [&](Shader& sh, glm::vec3 pos, float yaw,
             glm::vec3 bCol, bool sp)
             {
-                glm::mat4 R = glm::rotate(glm::mat4(1.f), glm::radians(yaw), { 0,1,0 });
+                glm::mat4 R = glm::rotate(glm::mat4(1.f), glm::radians(yaw + 90.f), { 0,1,0 });
                 auto part = [&](glm::vec3 off, glm::vec3 sc, glm::vec3 col) {
                     glm::mat4 m = glm::translate(glm::mat4(1.f), pos) * R;
                     m = glm::translate(m, off); m = glm::scale(m, sc);
@@ -570,14 +570,14 @@ int main() {
                 pole = glm::scale(pole, { .10f,5.f,.10f });
                 drawMesh(sh, cylVAO, cylN, pole, false, 0, { .65f,.65f,.68f }, sp);
                 // Lampa plata direct la varful cilindrului (y=5, fara gap)
-                glm::mat4 lamp = glm::translate(glm::mat4(1.f), { bp.x,bp.y + 4.75f,bp.z });
-                lamp = glm::scale(lamp, { .40f,.18f,.40f });
+                glm::mat4 lamp = glm::translate(glm::mat4(1.f), { bp.x, bp.y + 5.2f, bp.z });
+                lamp = glm::scale(lamp, { .40f, .30f, .40f });
                 drawMesh(sh, boxVAO, boxN, lamp, false, 0, { 1.f,.95f,.6f }, sp);
             }
             // C1 – masina jucatorului (verde)
             drawCar(sh, playerCar.pos, playerCar.yaw, { 0.15f,0.70f,0.20f }, sp);
             // C2 – masini auto
-            for (int i = 0;i < 2;i++) drawCar(sh, autoCars[i].pos, autoCars[i].yaw, autoCars[i].color, sp);
+            for (int i = 0;i < 2;i++) drawCar(sh, autoCars[i].pos, autoCars[i].yaw - 90.f, autoCars[i].color, sp);
             // C2 – pietoni
             for (int i = 0;i < 3;i++) drawPed(sh, peds[i].pos, peds[i].color, sp);
             };
@@ -587,7 +587,7 @@ int main() {
         glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
         glEnable(GL_POLYGON_OFFSET_FILL);
-        glPolygonOffset(1.5f, 3.f);
+        glPolygonOffset(3.f, 6.f);
         shadowShader.use();
         shadowShader.setMat4("lightSpaceMatrix", lightSpaceMat);
         renderScene(shadowShader, true);
