@@ -58,7 +58,7 @@ void main()
         float dist  = length(lv);
         float atten = 1.0 / (1.0 + 0.09*dist + 0.032*dist*dist);
         float pl    = max(dot(norm, normalize(lv)), 0.0);
-        result += pl * atten * pointLightColor[i] * baseColor * 2.0;
+        result += pl * atten * pointLightColor[i] * baseColor * 5.0;
     }
 
     FragColor = vec4(result, 1.0);
