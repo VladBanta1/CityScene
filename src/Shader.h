@@ -7,10 +7,16 @@
 #include <sstream>
 #include <iostream>
 
+// shaderele / cum functioneaza clasa Shader
+// Incarca fisierele .vert si .frag de pe disk, le compileaza si le linkeaza
+// intr-un program shader OpenGL (ID). Ofera metode pentru setarea uniformelor.
+// Uniformele sunt variabile globale din shader accesibile din C++ (matrici, culori, etc.)
+
 class Shader {
 public:
-    unsigned int ID;
+    unsigned int ID;  // ID-ul programului shader pe GPU
 
+    // cum compilez shaderele / constructorul incarca, compileaza si linkeaza
     Shader(const char* vertPath, const char* fragPath) {
         std::ifstream vFile(vertPath), fFile(fragPath);
         if (!vFile.is_open()) std::cerr << "Cannot open: " << vertPath << "\n";
@@ -26,6 +32,7 @@ public:
 
         int ok; char log[1024];
 
+        // compilare vertex shader
         unsigned int vert = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vert, 1, &vSrc, nullptr);
         glCompileShader(vert);
@@ -35,6 +42,7 @@ public:
             std::cerr << "[VERT ERROR] " << log << "\n";
         }
 
+        // compilare fragment shader
         unsigned int frag = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(frag, 1, &fSrc, nullptr);
         glCompileShader(frag);
@@ -44,6 +52,7 @@ public:
             std::cerr << "[FRAG ERROR] " << log << "\n";
         }
 
+        // linkare program shader (combina vertex + fragment intr-un program complet)
         ID = glCreateProgram();
         glAttachShader(ID, vert);
         glAttachShader(ID, frag);
@@ -54,12 +63,17 @@ public:
             std::cerr << "[LINK ERROR] " << log << "\n";
         }
 
+        // shaderele intermediare pot fi sterse dupa linkare
         glDeleteShader(vert);
         glDeleteShader(frag);
     }
 
+    // activeaza acest program shader pentru randarea curenta
     void use() const { glUseProgram(ID); }
 
+    // cum ai trimis datele la shadere / setare uniforme
+    // glGetUniformLocation gaseste locatia uniformului dupa nume in shader.
+    // Valoarea e trimisa cu glUniform* corespunzator tipului.
     void setInt(const std::string& n, int v) const
     {
         glUniform1i(glGetUniformLocation(ID, n.c_str()), v);
@@ -72,6 +86,7 @@ public:
     {
         glUniform3fv(glGetUniformLocation(ID, n.c_str()), 1, glm::value_ptr(v));
     }
+    // cum ai trimis matricele la GPU - glm::value_ptr converteste matricea GLM in float[]
     void setMat4(const std::string& n, const glm::mat4& m) const
     {
         glUniformMatrix4fv(glGetUniformLocation(ID, n.c_str()), 1, GL_FALSE, glm::value_ptr(m));
