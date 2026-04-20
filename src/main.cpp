@@ -396,7 +396,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     GLFWwindow* window = glfwCreateWindow(SCR_W, SCR_H,
-        "GPS – P3+C1+C2: City, Car & Pedestrians", NULL, NULL);
+        "GPS – City", NULL, NULL);
     if (!window) { glfwTerminate();return -1; }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
